@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'nsu.anisimov.storage_processing'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+application {
+    mainClass = 'nsu.anisimov.storage_processing.task1.Main'
+}
+
+jar {
+    archiveFileName = 'app.jar'
+    manifest {
+        attributes(
+                'Main-Class': 'nsu.anisimov.storage_processing.task1.Main'
+        )
+    }
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
