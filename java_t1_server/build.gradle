@@ -1,0 +1,58 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '9.6.1'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'org.bouncycastle:bcpkix-jdk18on:1.86'
+}
+
+shadowJar {
+    enabled = false
+}
+
+tasks.register('buildClientJar', ShadowJar) {
+    group = 'shadow'
+    archiveClassifier = 'clientJar'
+    manifest {
+        attributes 'Main-Class': 'nsu.anisimov.java_t1.client.Main'
+    }
+    from sourceSets.main.output
+    configurations = [project.configurations.runtimeClasspath]
+
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+}
+
+tasks.register('buildServerJar', ShadowJar) {
+    group = 'shadow'
+    archiveClassifier = 'serverJar'
+    manifest {
+        attributes 'Main-Class': 'nsu.anisimov.java_t1.server.Main'
+    }
+    from sourceSets.main.output
+    configurations = [project.configurations.runtimeClasspath]
+
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+}
+
+assemble.dependsOn buildClientJar, buildServerJar
+
+test {
+    useJUnitPlatform()
+}
